@@ -19,7 +19,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
-
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -46,7 +46,9 @@
 
 #define GETOPT_INTERFACE_VERSION 2
 #if !defined _LIBC && defined __GLIBC__ && __GLIBC__ >= 2
+
 #include <gnu-versions.h>
+
 #if _GNU_GETOPT_INTERFACE_VERSION == GETOPT_INTERFACE_VERSION
 #define ELIDE_CODE
 #endif
@@ -94,7 +96,7 @@ getopt_long_only (argc, argv, options, long_options, opt_index)
 
 
 #endif	/* Not ELIDE_CODE.  */
-
+
 #ifdef TEST
 
 #include <stdio.h>

@@ -23,7 +23,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
    USA.  */
-
+
 /* This tells Alpha OSF/1 not to define a getopt prototype in <stdio.h>.
    Ditto for AIX 3.2 and <stdlib.h>.  */
 #ifndef _NO_PROTO
@@ -54,7 +54,9 @@
 
 #define GETOPT_INTERFACE_VERSION 2
 #if !defined _LIBC && defined __GLIBC__ && __GLIBC__ >= 2
+
 # include <gnu-versions.h>
+
 # if _GNU_GETOPT_INTERFACE_VERSION == GETOPT_INTERFACE_VERSION
 #  define ELIDE_CODE
 # endif
@@ -986,7 +988,7 @@ getopt (argc, argv, optstring)
 }
 
 #endif	/* Not ELIDE_CODE.  */
-
+
 #ifdef TEST
 
 /* Compile with -DTEST to make an executable for use in testing

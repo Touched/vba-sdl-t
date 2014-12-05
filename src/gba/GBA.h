@@ -16,37 +16,37 @@
 #define SAVE_GAME_VERSION  SAVE_GAME_VERSION_10
 
 typedef struct {
-  u8 *address;
-  u32 mask;
+    u8 *address;
+    u32 mask;
 } memoryMap;
 
 typedef union {
-  struct {
+    struct {
 #ifdef WORDS_BIGENDIAN
     u8 B3;
     u8 B2;
     u8 B1;
     u8 B0;
 #else
-    u8 B0;
-    u8 B1;
-    u8 B2;
-    u8 B3;
+        u8 B0;
+        u8 B1;
+        u8 B2;
+        u8 B3;
 #endif
-  } B;
-  struct {
+    } B;
+    struct {
 #ifdef WORDS_BIGENDIAN
     u16 W1;
     u16 W0;
 #else
-    u16 W0;
-    u16 W1;
+        u16 W0;
+        u16 W1;
 #endif
-  } W;
+    } W;
 #ifdef WORDS_BIGENDIAN
   volatile u32 I;
 #else
-	u32 I;
+    u32 I;
 #endif
 } reg_pair;
 
@@ -64,7 +64,8 @@ extern bool V_FLAG;
 extern bool armIrqEnable;
 extern bool armState;
 extern int armMode;
-extern void (*cpuSaveGameFunc)(u32,u8);
+
+extern void (*cpuSaveGameFunc)(u32, u8);
 
 #ifdef BKPT_SUPPORT
 extern u8 freezeWorkRAM[0x40000];
@@ -73,41 +74,69 @@ extern u8 freezeVRAM[0x18000];
 extern u8 freezeOAM[0x400];
 extern u8 freezePRAM[0x400];
 extern bool debugger_last;
-extern int  oldreg[18];
+extern int oldreg[18];
 extern char oldbuffer[10];
 #endif
 
 extern bool CPUReadGSASnapshot(const char *);
+
 extern bool CPUReadGSASPSnapshot(const char *);
+
 extern bool CPUWriteGSASnapshot(const char *, const char *, const char *, const char *);
+
 extern bool CPUWriteBatteryFile(const char *);
+
 extern bool CPUReadBatteryFile(const char *);
+
 extern bool CPUExportEepromFile(const char *);
+
 extern bool CPUImportEepromFile(const char *);
+
 extern bool CPUWritePNGFile(const char *);
+
 extern bool CPUWriteBMPFile(const char *);
+
 extern void CPUCleanUp();
+
 extern void CPUUpdateRender();
+
 extern void CPUUpdateRenderBuffers(bool);
+
 extern bool CPUReadMemState(char *, int);
+
 extern bool CPUWriteMemState(char *, int);
+
 #ifdef __LIBRETRO__
 extern bool CPUReadState(const u8*, unsigned);
 extern unsigned int CPUWriteState(u8 *data, unsigned int size);
 #else
+
 extern bool CPUReadState(const char *);
+
 extern bool CPUWriteState(const char *);
+
 #endif
+
 extern int CPULoadRom(const char *);
+
 extern void doMirroring(bool);
+
 extern void CPUUpdateRegister(u32, u16);
-extern void applyTimer ();
-extern void CPUInit(const char *,bool);
+
+extern void applyTimer();
+
+extern void CPUInit(const char *, bool);
+
 extern void CPUReset();
+
 extern void CPULoop(int);
-extern void CPUCheckDMA(int,int);
+
+extern void CPUCheckDMA(int, int);
+
 extern bool CPUIsGBAImage(const char *);
+
 extern bool CPUIsZipFile(const char *);
+
 #ifdef PROFILING
 #include "prof/prof.h"
 extern void cpuProfil(profile_segment *seg);
