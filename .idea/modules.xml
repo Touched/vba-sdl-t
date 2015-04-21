@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/vba.iml" filepath="$PROJECT_DIR$/.idea/vba.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vba-sdl-t.iml" filepath="$PROJECT_DIR$/vba-sdl-t.iml" />
     </modules>
   </component>
 </project>

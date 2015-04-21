@@ -23,6 +23,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <cmath>
+#include "ipc.h"
 
 #ifdef __APPLE__
     #include <OpenGL/glu.h>
@@ -2175,6 +2176,7 @@ int main(int argc, char **argv) {
             int size = CPULoadRom(szFile);
             failed = (size == 0);
             if (!failed) {
+                ipc_set_rom(szFile);
                 sdlApplyPerImagePreferences();
 
                 doMirroring(mirroringEnable);
@@ -2221,6 +2223,8 @@ int main(int argc, char **argv) {
     if (debuggerStub)
         remoteInit();
 
+    ipc_init();
+
     int flags = SDL_INIT_VIDEO | SDL_INIT_AUDIO |
             SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE;
 
@@ -2261,7 +2265,6 @@ int main(int argc, char **argv) {
         srcWidth = 320;
         srcHeight = 240;
     }
-
     sdlReadDesktopVideoMode();
 
     sdlInitVideo();
@@ -2322,12 +2325,13 @@ int main(int argc, char **argv) {
         }
     }
 
-
     while (emulating) {
         if (!paused && active) {
-            if (debugger && emulator.emuHasDebugger)
+            if (debugger && emulator.emuHasDebugger) {
                 dbgMain();
+            }
             else {
+                ipc_iteration();
                 emulator.emuMain(emulator.emuCount);
                 if (rewindSaveNeeded && rewindMemory && emulator.emuWriteMemState) {
                     handleRewinds();
@@ -2338,6 +2342,7 @@ int main(int argc, char **argv) {
         } else {
             SDL_Delay(500);
         }
+
         sdlPollEvents();
 #if WITH_LIRC
         lircCheckInput();
@@ -2376,7 +2381,7 @@ int main(int argc, char **argv) {
 #if WITH_LIRC
     StopLirc();
 #endif
-
+    ipc_end();
     SDL_Quit();
     return 0;
 }

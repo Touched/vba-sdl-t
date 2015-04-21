@@ -1,0 +1,8 @@
+.idea
+vba-sdl-t.iml
+*.a
+gvbam
+vbam
+Makefile
+CMakeCache.txt
+CMakeFiles

@@ -292,6 +292,7 @@ SET(SRC_SDL
     src/sdl/expr.cpp
     src/sdl/exprNode.cpp
     src/sdl/expr-lex.cpp
+    src/sdl/ipc.cpp
 )
 
 SET(SRC_FILTERS
