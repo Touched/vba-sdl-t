@@ -6,3 +6,5 @@ vbam
 Makefile
 CMakeCache.txt
 CMakeFiles
+BPRE0.gba
+cmake_install.cmake

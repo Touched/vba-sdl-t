@@ -60,6 +60,11 @@
 #include "inputSDL.h"
 #include "../common/SoundSDL.h"
 
+/* Link
+---------------------*/
+#include "../gba/GBALink.h"
+/* ---------------- */
+
 #ifndef _WIN32
 
 # include <unistd.h>
@@ -73,7 +78,9 @@
 #ifndef __GNUC__
 # define HAVE_DECL_GETOPT 0
 # define __STDC__ 1
+
 # include "getopt.h"
+
 #else // ! __GNUC__
 # define HAVE_DECL_GETOPT 1
 
@@ -264,49 +271,49 @@ const char *sdlPreparedCheatCodes[MAX_CHEATS];
 #define SDL_SOUND_STEREO     0.15
 
 struct option sdlOptions[] = {
-        {"agb-print", no_argument, &sdlAgbPrint, 1},
-        {"auto-frameskip", no_argument, &autoFrameSkip, 1},
-        {"bios", required_argument, 0, 'b'},
-        {"config", required_argument, 0, 'c'},
-        {"debug", no_argument, 0, 'd'},
-        {"filter", required_argument, 0, 'f'},
-        {"ifb-filter", required_argument, 0, 'I'},
-        {"flash-size", required_argument, 0, 'S'},
-        {"flash-64k", no_argument, &sdlFlashSize, 0},
-        {"flash-128k", no_argument, &sdlFlashSize, 1},
-        {"frameskip", required_argument, 0, 's'},
-        {"fullscreen", no_argument, &fullscreen, 1},
-        {"gdb", required_argument, 0, 'G'},
-        {"help", no_argument, &sdlPrintUsage, 1},
-        {"patch", required_argument, 0, 'i'},
-        {"no-agb-print", no_argument, &sdlAgbPrint, 0},
-        {"no-auto-frameskip", no_argument, &autoFrameSkip, 0},
-        {"no-debug", no_argument, 0, 'N'},
-        {"no-patch", no_argument, &sdlAutoPatch, 0},
-        {"no-opengl", no_argument, &openGL, 0},
-        {"no-pause-when-inactive", no_argument, &pauseWhenInactive, 0},
-        {"no-rtc", no_argument, &sdlRtcEnable, 0},
-        {"no-show-speed", no_argument, &showSpeed, 0},
-        {"opengl", required_argument, 0, 'O'},
-        {"opengl-nearest", no_argument, &openGL, 1},
-        {"opengl-bilinear", no_argument, &openGL, 2},
-        {"pause-when-inactive", no_argument, &pauseWhenInactive, 1},
-        {"profile", optional_argument, 0, 'p'},
-        {"rtc", no_argument, &sdlRtcEnable, 1},
-        {"save-type", required_argument, 0, 't'},
-        {"save-auto", no_argument, &cpuSaveType, 0},
-        {"save-eeprom", no_argument, &cpuSaveType, 1},
-        {"save-sram", no_argument, &cpuSaveType, 2},
-        {"save-flash", no_argument, &cpuSaveType, 3},
-        {"save-sensor", no_argument, &cpuSaveType, 4},
-        {"save-none", no_argument, &cpuSaveType, 5},
-        {"show-speed-normal", no_argument, &showSpeed, 1},
-        {"show-speed-detailed", no_argument, &showSpeed, 2},
-        {"throttle", required_argument, 0, 'T'},
-        {"verbose", required_argument, 0, 'v'},
-        {"cheat", required_argument, 0, 1000},
-        {"autofire", required_argument, 0, 1001},
-        {NULL, no_argument, NULL, 0}
+        {"agb-print",              no_argument,       &sdlAgbPrint,       1},
+        {"auto-frameskip",         no_argument,       &autoFrameSkip,     1},
+        {"bios",                   required_argument, 0,                  'b'},
+        {"config",                 required_argument, 0,                  'c'},
+        {"debug",                  no_argument,       0,                  'd'},
+        {"filter",                 required_argument, 0,                  'f'},
+        {"ifb-filter",             required_argument, 0,                  'I'},
+        {"flash-size",             required_argument, 0,                  'S'},
+        {"flash-64k",              no_argument,       &sdlFlashSize,      0},
+        {"flash-128k",             no_argument,       &sdlFlashSize,      1},
+        {"frameskip",              required_argument, 0,                  's'},
+        {"fullscreen",             no_argument,       &fullscreen,        1},
+        {"gdb",                    required_argument, 0,                  'G'},
+        {"help",                   no_argument,       &sdlPrintUsage,     1},
+        {"patch",                  required_argument, 0,                  'i'},
+        {"no-agb-print",           no_argument,       &sdlAgbPrint,       0},
+        {"no-auto-frameskip",      no_argument,       &autoFrameSkip,     0},
+        {"no-debug",               no_argument,       0,                  'N'},
+        {"no-patch",               no_argument,       &sdlAutoPatch,      0},
+        {"no-opengl",              no_argument,       &openGL,            0},
+        {"no-pause-when-inactive", no_argument,       &pauseWhenInactive, 0},
+        {"no-rtc",                 no_argument,       &sdlRtcEnable,      0},
+        {"no-show-speed",          no_argument,       &showSpeed,         0},
+        {"opengl",                 required_argument, 0,                  'O'},
+        {"opengl-nearest",         no_argument,       &openGL,            1},
+        {"opengl-bilinear",        no_argument,       &openGL,            2},
+        {"pause-when-inactive",    no_argument,       &pauseWhenInactive, 1},
+        {"profile",                optional_argument, 0,                  'p'},
+        {"rtc",                    no_argument,       &sdlRtcEnable,      1},
+        {"save-type",              required_argument, 0,                  't'},
+        {"save-auto",              no_argument,       &cpuSaveType,       0},
+        {"save-eeprom",            no_argument,       &cpuSaveType,       1},
+        {"save-sram",              no_argument,       &cpuSaveType,       2},
+        {"save-flash",             no_argument,       &cpuSaveType,       3},
+        {"save-sensor",            no_argument,       &cpuSaveType,       4},
+        {"save-none",              no_argument,       &cpuSaveType,       5},
+        {"show-speed-normal",      no_argument,       &showSpeed,         1},
+        {"show-speed-detailed",    no_argument,       &showSpeed,         2},
+        {"throttle",               required_argument, 0,                  'T'},
+        {"verbose",                required_argument, 0,                  'v'},
+        {"cheat",                  required_argument, 0,                  1000},
+        {"autofire",               required_argument, 0,                  1001},
+        {NULL,                     no_argument,       NULL,               0}
 };
 
 static void sdlChangeVolume(float d) {
@@ -398,7 +405,7 @@ void sdlCheckDirectory(char *dir) {
     char *p = dir + len - 1;
 
     if (*p == '/' ||
-            *p == '\\')
+        *p == '\\')
         *p = 0;
 
     if (stat(dir, &buf) == 0) {
@@ -421,7 +428,7 @@ char *sdlGetFilename(char *name) {
 
     while (true) {
         if (*p == '/' ||
-                *p == '\\') {
+            *p == '\\') {
             p++;
             break;
         }
@@ -537,7 +544,7 @@ FILE *sdlFindFile(const char *name) {
     return NULL;
 }
 
-void sdlReadPreferences(FILE *f) {
+void sdlReadPreferences(FILE * f) {
     char buffer[2048];
 
     while (1) {
@@ -850,9 +857,9 @@ void sdlOpenGLInit(int w, int h) {
     glBindTexture(GL_TEXTURE_2D, screenTexture);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-            openGL == 2 ? GL_LINEAR : GL_NEAREST);
+                    openGL == 2 ? GL_LINEAR : GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-            openGL == 2 ? GL_LINEAR : GL_NEAREST);
+                    openGL == 2 ? GL_LINEAR : GL_NEAREST);
 
     // Calculate texture size as a the smallest working power of two
     float n1 = log10((float) destWidth) / log10(2.0f);
@@ -866,7 +873,7 @@ void sdlOpenGLInit(int w, int h) {
     textureSize = (int) pow(2.0f, n);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureSize, textureSize, 0,
-            GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+                 GL_BGRA, GL_UNSIGNED_BYTE, NULL);
 
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -1206,13 +1213,13 @@ void sdlInitVideo() {
         sdlOpenGLInit(screenWidth, screenHeight);
 
         if ((!fullscreen)
-                && sdlOpenglScale > 1
-                && scaledWidth < desktopWidth
-                && scaledHeight < desktopHeight
+            && sdlOpenglScale > 1
+            && scaledWidth < desktopWidth
+            && scaledHeight < desktopHeight
                 ) {
             SDL_SetVideoMode(scaledWidth, scaledHeight, 0,
-                    SDL_OPENGL | SDL_RESIZABLE |
-                            (fullscreen ? SDL_FULLSCREEN : 0));
+                             SDL_OPENGL | SDL_RESIZABLE |
+                             (fullscreen ? SDL_FULLSCREEN : 0));
             sdlOpenGLInit(scaledWidth, scaledHeight);
             /* xKiv: it would seem that SDL_RESIZABLE causes the *previous* dimensions to be immediately
              * reported back via the SDL_VIDEORESIZE event
@@ -1235,7 +1242,7 @@ void sdlInitVideo() {
  */
 void change_rewind(int howmuch) {
     if (emulating && emulator.emuReadMemState && rewindMemory
-            && rewindCount
+        && rewindCount
             ) {
         rewindPos = (rewindPos + rewindCount + howmuch) % rewindCount;
         emulator.emuReadMemState(
@@ -1357,8 +1364,8 @@ void sdlPollEvents() {
                 }
                 if (openGL) {
                     SDL_SetVideoMode(event.resize.w, event.resize.h, 0,
-                            SDL_OPENGL | SDL_RESIZABLE |
-                                    (fullscreen ? SDL_FULLSCREEN : 0));
+                                     SDL_OPENGL | SDL_RESIZABLE |
+                                     (fullscreen ? SDL_FULLSCREEN : 0));
                     sdlOpenGLInit(event.resize.w, event.resize.h);
                 }
                 break;
@@ -1400,7 +1407,7 @@ void sdlPollEvents() {
                 switch (event.key.keysym.sym) {
                     case SDLK_r:
                         if (!(event.key.keysym.mod & MOD_NOCTRL) &&
-                                (event.key.keysym.mod & KMOD_CTRL)) {
+                            (event.key.keysym.mod & KMOD_CTRL)) {
                             if (emulating) {
                                 emulator.emuReset();
 
@@ -1410,27 +1417,27 @@ void sdlPollEvents() {
                         break;
                     case SDLK_b:
                         if (!(event.key.keysym.mod & MOD_NOCTRL) &&
-                                (event.key.keysym.mod & KMOD_CTRL))
+                            (event.key.keysym.mod & KMOD_CTRL))
                             change_rewind(-1);
                         break;
                     case SDLK_v:
                         if (!(event.key.keysym.mod & MOD_NOCTRL) &&
-                                (event.key.keysym.mod & KMOD_CTRL))
+                            (event.key.keysym.mod & KMOD_CTRL))
                             change_rewind(+1);
                         break;
                     case SDLK_h:
                         if (!(event.key.keysym.mod & MOD_NOCTRL) &&
-                                (event.key.keysym.mod & KMOD_CTRL))
+                            (event.key.keysym.mod & KMOD_CTRL))
                             change_rewind(0);
                         break;
                     case SDLK_j:
                         if (!(event.key.keysym.mod & MOD_NOCTRL) &&
-                                (event.key.keysym.mod & KMOD_CTRL))
+                            (event.key.keysym.mod & KMOD_CTRL))
                             change_rewind((rewindTopPos - rewindPos) * ((rewindTopPos > rewindPos) ? +1 : -1));
                         break;
                     case SDLK_e:
                         if (!(event.key.keysym.mod & MOD_NOCTRL) &&
-                                (event.key.keysym.mod & KMOD_CTRL)) {
+                            (event.key.keysym.mod & KMOD_CTRL)) {
                             cheatsEnabled = !cheatsEnabled;
                             systemConsoleMessage(cheatsEnabled ? "Cheats on" : "Cheats off");
                         }
@@ -1438,7 +1445,7 @@ void sdlPollEvents() {
 
                     case SDLK_s:
                         if (!(event.key.keysym.mod & MOD_NOCTRL) &&
-                                (event.key.keysym.mod & KMOD_CTRL)
+                            (event.key.keysym.mod & KMOD_CTRL)
                                 ) {
                             if (sdlSoundToggledOff) { // was off
                                 // restore saved state
@@ -1503,7 +1510,7 @@ void sdlPollEvents() {
 
                     case SDLK_p:
                         if (!(event.key.keysym.mod & MOD_NOCTRL) &&
-                                (event.key.keysym.mod & KMOD_CTRL)) {
+                            (event.key.keysym.mod & KMOD_CTRL)) {
                             paused = !paused;
                             SDL_PauseAudio(paused);
                             if (paused)
@@ -1516,14 +1523,14 @@ void sdlPollEvents() {
                         break;
                     case SDLK_f:
                         if (!(event.key.keysym.mod & MOD_NOCTRL) &&
-                                (event.key.keysym.mod & KMOD_CTRL)) {
+                            (event.key.keysym.mod & KMOD_CTRL)) {
                             fullscreen = !fullscreen;
                             sdlInitVideo();
                         }
                         break;
                     case SDLK_g:
                         if (!(event.key.keysym.mod & MOD_NOCTRL) &&
-                                (event.key.keysym.mod & KMOD_CTRL)) {
+                            (event.key.keysym.mod & KMOD_CTRL)) {
                             filterFunction = 0;
                             while (!filterFunction) {
                                 filter = (Filter) ((filter + 1) % kInvalidFilter);
@@ -1555,7 +1562,7 @@ void sdlPollEvents() {
                     case SDLK_F7:
                     case SDLK_F8:
                         if (!(event.key.keysym.mod & MOD_NOSHIFT) &&
-                                (event.key.keysym.mod & KMOD_SHIFT)) {
+                            (event.key.keysym.mod & KMOD_SHIFT)) {
                             sdlHandleSavestateKey(event.key.keysym.sym - SDLK_F1, 1); // with SHIFT
                         } else if (!(event.key.keysym.mod & MOD_KEYS)) {
                             sdlHandleSavestateKey(event.key.keysym.sym - SDLK_F1, 0); // without SHIFT
@@ -1564,14 +1571,16 @@ void sdlPollEvents() {
                         /* backups - only load */
                     case SDLK_F9:
                         /* F9 is "load backup" - saved state from *just before* the last restore */
-                        if (!(event.key.keysym.mod & MOD_NOSHIFT)) /* must work with or without shift, but only without other modifiers*/
+                        if (!(event.key.keysym.mod &
+                              MOD_NOSHIFT)) /* must work with or without shift, but only without other modifiers*/
                         {
                             sdlReadState(SLOT_POS_LOAD_BACKUP);
                         }
                         break;
                     case SDLK_F10:
                         /* F10 is "save backup" - what was in the last overwritten savestate before we overwrote it*/
-                        if (!(event.key.keysym.mod & MOD_NOSHIFT)) /* must work with or without shift, but only without other modifiers*/
+                        if (!(event.key.keysym.mod &
+                              MOD_NOSHIFT)) /* must work with or without shift, but only without other modifiers*/
                         {
                             sdlReadState(SLOT_POS_SAVE_BACKUP);
                         }
@@ -1581,17 +1590,17 @@ void sdlPollEvents() {
                     case SDLK_3:
                     case SDLK_4:
                         if (!(event.key.keysym.mod & MOD_NOALT) &&
-                                (event.key.keysym.mod & KMOD_ALT)) {
+                            (event.key.keysym.mod & KMOD_ALT)) {
                             const char *disableMessages[4] =
                                     {"autofire A disabled",
-                                            "autofire B disabled",
-                                            "autofire R disabled",
-                                            "autofire L disabled"};
+                                     "autofire B disabled",
+                                     "autofire R disabled",
+                                     "autofire L disabled"};
                             const char *enableMessages[4] =
                                     {"autofire A",
-                                            "autofire B",
-                                            "autofire R",
-                                            "autofire L"};
+                                     "autofire B",
+                                     "autofire R",
+                                     "autofire L"};
 
                             EKey k = KEY_BUTTON_A;
                             if (event.key.keysym.sym == SDLK_1)
@@ -1609,7 +1618,7 @@ void sdlPollEvents() {
                                 systemScreenMessage(disableMessages[event.key.keysym.sym - SDLK_1]);
                             }
                         } else if (!(event.key.keysym.mod & MOD_NOCTRL) &&
-                                (event.key.keysym.mod & KMOD_CTRL)) {
+                                   (event.key.keysym.mod & KMOD_CTRL)) {
                             int mask = 0x0100 << (event.key.keysym.sym - SDLK_1);
                             layerSettings ^= mask;
                             layerEnable = DISPCNT & layerSettings;
@@ -1621,7 +1630,7 @@ void sdlPollEvents() {
                     case SDLK_7:
                     case SDLK_8:
                         if (!(event.key.keysym.mod & MOD_NOCTRL) &&
-                                (event.key.keysym.mod & KMOD_CTRL)) {
+                            (event.key.keysym.mod & KMOD_CTRL)) {
                             int mask = 0x0100 << (event.key.keysym.sym - SDLK_1);
                             layerSettings ^= mask;
                             layerEnable = DISPCNT & layerSettings;
@@ -1629,7 +1638,7 @@ void sdlPollEvents() {
                         break;
                     case SDLK_n:
                         if (!(event.key.keysym.mod & MOD_NOCTRL) &&
-                                (event.key.keysym.mod & KMOD_CTRL)) {
+                            (event.key.keysym.mod & KMOD_CTRL)) {
                             if (paused)
                                 paused = false;
                             pauseNextFrame = true;
@@ -1828,14 +1837,15 @@ void handleRewinds() {
 
     if (
             emulator.emuWriteMemState
-                    &&
-                    emulator.emuWriteMemState(
-                            &rewindMemory[curSavePos * REWIND_SIZE],
-                            REWIND_SIZE
-                    )
+            &&
+            emulator.emuWriteMemState(
+                    &rewindMemory[curSavePos * REWIND_SIZE],
+                    REWIND_SIZE
+            )
             ) {
         char rewMsgBuf[100];
-        snprintf(rewMsgBuf, 100, "Remembered rewind %1d (of %1d), serial %d.", curSavePos + 1, rewindCount, rewindSerial);
+        snprintf(rewMsgBuf, 100, "Remembered rewind %1d (of %1d), serial %d.", curSavePos + 1, rewindCount,
+                 rewindSerial);
         rewMsgBuf[99] = 0;
         systemConsoleMessage(rewMsgBuf);
         rewindSerials[curSavePos] = rewindSerial;
@@ -1892,10 +1902,10 @@ int main(int argc, char **argv) {
     sdlPrintUsage = 0;
 
     while ((op = getopt_long(argc,
-            argv,
-            "FNO:T:Y:G:I:D:b:c:df:hi:p::s:t:v:",
-            sdlOptions,
-            NULL)) != -1) {
+                             argv,
+                             "FNO:T:Y:G:I:D:b:c:df:hi:p::s:t:v:",
+                             sdlOptions,
+                             NULL)) != -1) {
         switch (op) {
             case 0:
                 // long option already processed by getopt_long
@@ -2226,7 +2236,7 @@ int main(int argc, char **argv) {
     ipc_init();
 
     int flags = SDL_INIT_VIDEO | SDL_INIT_AUDIO |
-            SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE;
+                SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE;
 
     if (SDL_Init(flags)) {
         systemMessage(0, "Failed to init SDL: %s", SDL_GetError());
@@ -2279,8 +2289,9 @@ int main(int argc, char **argv) {
         systemColorDepth = 16;
 
     if (systemColorDepth != 16 && systemColorDepth != 24 &&
-            systemColorDepth != 32) {
-        fprintf(stderr, "Unsupported color depth '%d'.\nOnly 16, 24 and 32 bit color depths are supported\n", systemColorDepth);
+        systemColorDepth != 32) {
+        fprintf(stderr, "Unsupported color depth '%d'.\nOnly 16, 24 and 32 bit color depths are supported\n",
+                systemColorDepth);
         exit(-1);
     }
 
@@ -2333,6 +2344,12 @@ int main(int argc, char **argv) {
             else {
                 ipc_iteration();
                 emulator.emuMain(emulator.emuCount);
+
+#ifndef NO_LINK
+                if (lanlink.connected && linkid && lc.numtransfers == 0)
+                    lc.CheckConn();
+#endif
+
                 if (rewindSaveNeeded && rewindMemory && emulator.emuWriteMemState) {
                     handleRewinds();
                 }
@@ -2413,9 +2430,9 @@ void drawScreenMessage(u8 *screen, int pitch, int x, int y, unsigned int duratio
             gbSgbRenderBorder();
         }
         if (((systemGetClock() - screenMessageTime) < duration) &&
-                !disableStatusMessages) {
+            !disableStatusMessages) {
             drawText(screen, pitch, x, y,
-                    screenMessageBuffer, false);
+                     screenMessageBuffer, false);
         } else {
             screenMessage = false;
         }
@@ -2451,7 +2468,7 @@ void systemDrawScreen() {
         ifbFunction(pix + srcPitch, srcPitch, srcWidth, srcHeight);
 
     filterFunction(pix + srcPitch, srcPitch, delta, screen,
-            destPitch, srcWidth, srcHeight);
+                   destPitch, srcWidth, srcHeight);
 
     drawScreenMessage(screen, destPitch, 10, destHeight - 20, 3000);
 
@@ -2463,10 +2480,10 @@ void systemDrawScreen() {
         glPixelStorei(GL_UNPACK_ROW_LENGTH, destWidth);
         if (systemColorDepth == 16)
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, destWidth, destHeight,
-                    GL_RGB, GL_UNSIGNED_SHORT_5_6_5, screen);
+                            GL_RGB, GL_UNSIGNED_SHORT_5_6_5, screen);
         else
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, destWidth, destHeight,
-                    GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, screen);
+                            GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, screen);
 
         glBegin(GL_TRIANGLE_STRIP);
         glTexCoord2f(0.0f, 0.0f);
@@ -2476,7 +2493,7 @@ void systemDrawScreen() {
         glTexCoord2f(0.0f, destHeight / (GLfloat) textureSize);
         glVertex3i(0, 1, 0);
         glTexCoord2f(destWidth / (GLfloat) textureSize,
-                destHeight / (GLfloat) textureSize);
+                     destHeight / (GLfloat) textureSize);
         glVertex3i(1, 1, 0);
         glEnd();
 

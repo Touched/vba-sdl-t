@@ -9,13 +9,13 @@ endif( COMMAND cmake_policy )
 SET( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeScripts )
 
 option( ENABLE_SDL "Build the SDL port" ON )
-option( ENABLE_GTK "Build the GTK+ GUI" ON )
+option( ENABLE_GTK "Build the GTK+ GUI" OFF )
 option( ENABLE_WX "Build the wxWidgets port" OFF )
 option( ENABLE_DEBUGGER "Enable the debugger" ON )
 option( ENABLE_NLS "Enable translations" ON )
 option( ENABLE_ASM_CORE "Enable x86 ASM CPU cores" OFF )
 option( ENABLE_ASM_SCALERS "Enable x86 ASM graphic filters" OFF )
-option( ENABLE_LINK "Enable GBA linking functionality" OFF )
+option( ENABLE_LINK "Enable GBA linking functionality" ON )
 option( ENABLE_LIRC "Enable LIRC support" OFF )
 option( ENABLE_FFMPEG "Enable ffmpeg A/V recording" OFF )
 if(ENABLE_ASM_SCALERS)
@@ -419,9 +419,12 @@ IF( ENABLE_SDL )
         SET( LIRC_CLIENT_LIBRARY lirc_client )
     ENDIF( ENABLE_LIRC )
 
+    FIND_LIBRARY(READLINE_LIB readline)
+
     TARGET_LINK_LIBRARIES (
         vbam
         ${VBAMCORE_LIBS}
+        ${READLINE_LIB}
         ${WIN32_LIBRARIES}
         ${LIRC_CLIENT_LIBRARY}
     )
