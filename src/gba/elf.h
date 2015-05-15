@@ -171,7 +171,7 @@ struct Object {
     Object *next;
 };
 
-struct Function {
+struct ElfFunction {
     char *name;
     u32 lowPC;
     u32 highPC;
@@ -182,7 +182,7 @@ struct Function {
     Object *parameters;
     Object *variables;
     ELFBlock *frameBase;
-    Function *next;
+    ElfFunction *next;
 };
 
 struct LineInfoItem {
@@ -222,8 +222,8 @@ struct CompileUnit {
     bool hasLineInfo;
     u32 lineInfo;
     LineInfo *lineInfoTable;
-    Function *functions;
-    Function *lastFunction;
+    ElfFunction *functions;
+    ElfFunction *lastFunction;
     Object *variables;
     Type *types;
     CompileUnit *next;
@@ -261,18 +261,18 @@ extern const char *elfGetSymbol(int, u32 *, u32 *, int *);
 
 extern void elfCleanUp();
 
-extern bool elfGetCurrentFunction(u32, Function **, CompileUnit **c);
+extern bool elfGetCurrentFunction(u32, ElfFunction **, CompileUnit **c);
 
-extern bool elfGetObject(const char *, Function *, CompileUnit *, Object **);
+extern bool elfGetObject(const char *, ElfFunction *, CompileUnit *, Object **);
 
 extern bool elfFindLineInUnit(u32 *, CompileUnit *, int);
 
 extern bool elfFindLineInModule(u32 *, const char *, int);
 
-u32 elfDecodeLocation(Function *, ELFBlock *, LocationType *);
+u32 elfDecodeLocation(ElfFunction *, ELFBlock *, LocationType *);
 
-u32 elfDecodeLocation(Function *, ELFBlock *, LocationType *, u32);
+u32 elfDecodeLocation(ElfFunction *, ELFBlock *, LocationType *, u32);
 
-int elfFindLine(CompileUnit *unit, Function *func, u32 addr, const char **);
+int elfFindLine(CompileUnit *unit, ElfFunction *func, u32 addr, const char **);
 
 #endif // ELF_H

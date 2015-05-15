@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VBA-M\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-03 20:50+0100\n"
+"POT-Creation-Date: 2011-12-03 21:22+0100\n"
 "PO-Revision-Date: 2011-12-03 19:43+0000\n"
 "Last-Translator: bgK <bastien.bouclet@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: ../src/wx/wxvbam.cpp:326
@@ -2235,9 +2235,10 @@ msgstr "No throttle"
 msgid "No usable rpi plugins found in %s"
 msgstr "No usable rpi plugins found in %s"
 
-#: ../src/wx/cmdevents.cpp:557 ../src/wx/guiinit.cpp:1582 wx-xrc-strings.h:273
-#: wx-xrc-strings.h:304 wx-xrc-strings.h:316 wx-xrc-strings.h:342
-#: wx-xrc-strings.h:362 wx-xrc-strings.h:391 wx-xrc-strings.h:400
+#: ../src/wx/cmdevents.cpp:557 ../src/wx/guiinit.cpp:1582
+#: wx-xrc-strings.h:273 wx-xrc-strings.h:304 wx-xrc-strings.h:316
+#: wx-xrc-strings.h:342 wx-xrc-strings.h:362 wx-xrc-strings.h:391
+#: wx-xrc-strings.h:400
 msgid "None"
 msgstr "None"
 

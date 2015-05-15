@@ -45,6 +45,13 @@ static char *line_read = (char *) NULL;
 
 #ifdef HAVE_LIBREADLINE
 
+int my_cool_readline_func (int count, int key) {
+    printf ("key pressed: %d\n", key);
+    rl_on_new_line ();
+    return 0;
+}
+
+
 // Read a string, and return a pointer to it.  Returns NULL on EOF.
 char *rl_gets() {
     // If the buffer has already been allocated, return the memory
@@ -54,7 +61,7 @@ char *rl_gets() {
         line_read = (char *) NULL;
     }
 
-    //rl_bind_key(9, rl_insert);
+    rl_bind_keyseq("\\C-b", my_cool_readline_func);
 
     // Get a line from the user.
     line_read = readline("debugger> ");
@@ -485,9 +492,9 @@ static const char *debuggerPrintType(Type *t) {
     return t->name;
 }
 
-static void debuggerPrintValueInternal(Function *, Type *, ELFBlock *, int, int, u32);
+static void debuggerPrintValueInternal(ElfFunction *, Type *, ELFBlock *, int, int, u32);
 
-static void debuggerPrintValueInternal(Function *f, Type *t,
+static void debuggerPrintValueInternal(ElfFunction *f, Type *t,
                                        int bitSize, int bitOffset,
                                        u32 objLocation, LocationType type);
 
@@ -520,7 +527,7 @@ static void debuggerPrintArray(Type *t, u32 value) {
     printf("(%s[])0x%08x", debuggerPrintType(t->array->type), value);
 }
 
-static void debuggerPrintMember(Function *f,
+static void debuggerPrintMember(ElfFunction *f,
                                 Member *m,
                                 u32 objLocation,
                                 u32 location) {
@@ -575,7 +582,7 @@ static void debuggerPrintMember(Function *f,
     }
 }
 
-static void debuggerPrintStructure(Function *f, Type *t, u32 objLocation) {
+static void debuggerPrintStructure(ElfFunction *f, Type *t, u32 objLocation) {
     printf("{");
     int count = t->structure->memberCount;
     int i = 0;
@@ -592,7 +599,7 @@ static void debuggerPrintStructure(Function *f, Type *t, u32 objLocation) {
     printf("}");
 }
 
-static void debuggerPrintUnion(Function *f, Type *t, u32 objLocation) {
+static void debuggerPrintUnion(ElfFunction *f, Type *t, u32 objLocation) {
     // todo
     printf("{");
     int count = t->structure->memberCount;
@@ -620,7 +627,7 @@ static void debuggerPrintEnum(Type *t, u32 value) {
     printf("(UNKNOWN VALUE) %d", value);
 }
 
-static void debuggerPrintValueInternal(Function *f, Type *t,
+static void debuggerPrintValueInternal(ElfFunction *f, Type *t,
                                        int bitSize, int bitOffset,
                                        u32 objLocation, LocationType type) {
     u32 value = debuggerGetValue(objLocation, type);
@@ -659,7 +666,7 @@ static void debuggerPrintValueInternal(Function *f, Type *t,
     }
 }
 
-static void debuggerPrintValueInternal(Function *f, Type *t, ELFBlock *loc,
+static void debuggerPrintValueInternal(ElfFunction *f, Type *t, ELFBlock *loc,
                                        int bitSize, int bitOffset,
                                        u32 objLocation) {
     LocationType type;
@@ -677,7 +684,7 @@ static void debuggerPrintValueInternal(Function *f, Type *t, ELFBlock *loc,
     debuggerPrintValueInternal(f, t, bitSize, bitOffset, location, type);
 }
 
-static void debuggerPrintValue(Function *f, Object *o) {
+static void debuggerPrintValue(ElfFunction *f, Object *o) {
     debuggerPrintValueInternal(f, o->type, o->location, 0, 0, 0);
 
     printf("\n");
@@ -759,7 +766,7 @@ static void debuggerPrint(int argc, char **argv) {
         debuggerUsage(argv[0]);
     } else {
         u32 pc = armNextPC;
-        Function *f = NULL;
+        ElfFunction *f = NULL;
         CompileUnit *u = NULL;
 
         elfGetCurrentFunction(pc,
@@ -869,7 +876,7 @@ static void debuggerWhere(int n, char **args) {
 }
 
 static void debuggerLocals(int n, char **args) {
-    Function *f = NULL;
+    ElfFunction *f = NULL;
     CompileUnit *u = NULL;
     u32 pc = armNextPC;
     if (elfGetCurrentFunction(pc,
@@ -912,7 +919,7 @@ static void debuggerNext(int n, char **args) {
         }
     }
     debuggerDisableBreakpoints();
-    Function *f = NULL;
+    ElfFunction *f = NULL;
     CompileUnit *u = NULL;
     u32 a = armNextPC;
     if (elfGetCurrentFunction(a, &f, &u)) {
@@ -956,7 +963,7 @@ static void debuggerContinue(int n, char **args) {
             debuggerBreakpointNumber = number;
             debuggerDisableBreakpoints();
 
-            Function *f = NULL;
+            ElfFunction *f = NULL;
             CompileUnit *u = NULL;
 
             if (elfGetCurrentFunction(armNextPC, &f, &u)) {
@@ -1022,7 +1029,7 @@ static void debuggerBreak(int n, char **args) {
             int line = atoi(l);
 
             u32 addr;
-            Function *f;
+            ElfFunction *f;
             CompileUnit *u;
 
             if (elfFindLineInModule(&addr, name, line)) {
@@ -1044,7 +1051,7 @@ static void debuggerBreak(int n, char **args) {
             }
         } else if (c >= '0' && c <= '9') {
             int line = atoi(s);
-            Function *f;
+            ElfFunction *f;
             CompileUnit *u;
             u32 addr;
 
@@ -1072,7 +1079,7 @@ static void debuggerBreak(int n, char **args) {
             }
         } else {
             if (!elfGetSymbolAddress(s, &address, &value, &type)) {
-                printf("Function %s not found\n", args[1]);
+                printf("ElfFunction %s not found\n", args[1]);
                 return;
             }
         }

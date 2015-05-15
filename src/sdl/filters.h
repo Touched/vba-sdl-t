@@ -32,7 +32,7 @@ enum Filter {
     klq2x, khq2x, kStretch3x, khq3x, kStretch4x, khq4x, kInvalidFilter
 };
 
-// Function pointer type for a filter function
+// ElfFunction pointer type for a filter function
 typedef void(*FilterFunc)(u8 *, u32, u8 *, u8 *, u32, int, int);
 
 // Initialize a filter and get the corresponding filter function pointer
@@ -53,7 +53,7 @@ enum IFBFilter {
     kIFBNone, kIBMotionBlur, kIBSmart, kInvalidIFBFilter
 };
 
-// Function pointer type for an IFB filter function
+// ElfFunction pointer type for an IFB filter function
 typedef void(*IFBFilterFunc)(u8 *, u32, int, int);
 
 // Initialize an IFB filter and get the corresponding filter function pointer

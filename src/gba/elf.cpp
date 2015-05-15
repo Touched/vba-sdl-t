@@ -270,7 +270,7 @@ const char *elfGetAddressSymbol(u32 addr) {
     CompileUnit *unit = elfGetCompileUnit(addr);
     // found unit, need to find function
     if (unit) {
-        Function *func = unit->functions;
+        ElfFunction *func = unit->functions;
         while (func) {
             if (addr >= func->lowPC && addr < func->highPC) {
                 int offset = addr - func->lowPC;
@@ -346,7 +346,7 @@ bool elfFindLineInModule(u32 *addr, const char *name, int line) {
     return false;
 }
 
-int elfFindLine(CompileUnit *unit, Function * /* func */, u32 addr, const char **f) {
+int elfFindLine(CompileUnit *unit, ElfFunction * /* func */, u32 addr, const char **f) {
     int currentLine = -1;
     if (unit->hasLineInfo) {
         int count = unit->lineInfoTable->number;
@@ -379,11 +379,11 @@ bool elfFindLineInUnit(u32 *addr, CompileUnit *unit, int line) {
     return false;
 }
 
-bool elfGetCurrentFunction(u32 addr, Function **f, CompileUnit **u) {
+bool elfGetCurrentFunction(u32 addr, ElfFunction **f, CompileUnit **u) {
     CompileUnit *unit = elfGetCompileUnit(addr);
     // found unit, need to find function
     if (unit) {
-        Function *func = unit->functions;
+        ElfFunction *func = unit->functions;
         while (func) {
             if (addr >= func->lowPC && addr < func->highPC) {
                 *f = func;
@@ -396,7 +396,7 @@ bool elfGetCurrentFunction(u32 addr, Function **f, CompileUnit **u) {
     return false;
 }
 
-bool elfGetObject(const char *name, Function *f, CompileUnit *u, Object **o) {
+bool elfGetObject(const char *name, ElfFunction *f, CompileUnit *u, Object **o) {
     if (f && u) {
         Object *v = f->variables;
 
@@ -683,7 +683,7 @@ void elfPrintCallChain(u32 address) {
     }
 }
 
-u32 elfDecodeLocation(Function *f, ELFBlock *o, LocationType *type, u32 base) {
+u32 elfDecodeLocation(ElfFunction *f, ELFBlock *o, LocationType *type, u32 base) {
     u32 framebase = 0;
     if (f && f->frameBase) {
         ELFBlock *b = f->frameBase;
@@ -759,7 +759,7 @@ u32 elfDecodeLocation(Function *f, ELFBlock *o, LocationType *type, u32 base) {
     return location;
 }
 
-u32 elfDecodeLocation(Function *f, ELFBlock *o, LocationType *type) {
+u32 elfDecodeLocation(ElfFunction *f, ELFBlock *o, LocationType *type) {
     return elfDecodeLocation(f, o, type, 0);
 }
 
@@ -1297,9 +1297,9 @@ u8 *elfParseObject(u8 *data, ELFAbbrev *abbrev, CompileUnit *unit,
         Object **object);
 
 u8 *elfParseFunction(u8 *data, ELFAbbrev *abbrev, CompileUnit *unit,
-        Function **function);
+        ElfFunction **function);
 
-void elfCleanUp(Function *);
+void elfCleanUp(ElfFunction *);
 
 void elfAddType(Type *type, CompileUnit *unit, u32 offset) {
     if (type->next == NULL) {
@@ -1431,7 +1431,7 @@ void elfParseType(u8 *data, u32 offset, ELFAbbrev *abbrev, CompileUnit *unit,
                         }
                             break;
                         case DW_TAG_subprogram: {
-                            Function *fnc = NULL;
+                            ElfFunction *fnc = NULL;
                             data = elfParseFunction(data, abbr, unit, &fnc);
                             if (fnc != NULL) {
                                 if (unit->lastFunction)
@@ -1941,7 +1941,7 @@ u8 *elfParseObject(u8 *data, ELFAbbrev *abbrev, CompileUnit *unit,
 }
 
 u8 *elfParseBlock(u8 *data, ELFAbbrev *abbrev, CompileUnit *unit,
-        Function *func, Object **lastVar) {
+        ElfFunction *func, Object **lastVar) {
     int bytes;
     u32 start = func->lowPC;
     u32 end = func->highPC;
@@ -1989,7 +1989,7 @@ u8 *elfParseBlock(u8 *data, ELFAbbrev *abbrev, CompileUnit *unit,
                     data = elfParseBlock(data, abbrev, unit, func, lastVar);
                     break;
                 case DW_TAG_subprogram: {
-                    Function *f = NULL;
+                    ElfFunction *f = NULL;
                     data = elfParseFunction(data, abbrev, unit, &f);
                     if (f != NULL) {
                         if (unit->lastFunction)
@@ -2029,7 +2029,7 @@ u8 *elfParseBlock(u8 *data, ELFAbbrev *abbrev, CompileUnit *unit,
     return data;
 }
 
-void elfGetFunctionAttributes(CompileUnit *unit, u32 offset, Function *func) {
+void elfGetFunctionAttributes(CompileUnit *unit, u32 offset, ElfFunction *func) {
     u8 *data = unit->top + offset;
     int bytes;
     u32 abbrevNum = elfReadLEB128(data, &bytes);
@@ -2102,8 +2102,8 @@ void elfGetFunctionAttributes(CompileUnit *unit, u32 offset, Function *func) {
 }
 
 u8 *elfParseFunction(u8 *data, ELFAbbrev *abbrev, CompileUnit *unit,
-        Function **f) {
-    Function *func = (Function *) calloc(sizeof(Function), 1);
+        ElfFunction **f) {
+    ElfFunction *func = (ElfFunction *) calloc(sizeof(ElfFunction), 1);
     *f = func;
 
     int bytes;
@@ -2213,7 +2213,7 @@ u8 *elfParseFunction(u8 *data, ELFAbbrev *abbrev, CompileUnit *unit,
                     data = elfSkipData(data, abbrev, unit->abbrevs);
                     break;
                 case DW_TAG_subprogram: {
-                    Function *fnc = NULL;
+                    ElfFunction *fnc = NULL;
                     data = elfParseFunction(data, abbrev, unit, &fnc);
                     if (fnc != NULL) {
                         if (unit->lastFunction == NULL)
@@ -2324,7 +2324,7 @@ u8 *elfParseCompileUnitChildren(u8 *data, CompileUnit *unit) {
         ELFAbbrev *abbrev = elfGetAbbrev(unit->abbrevs, abbrevNum);
         switch (abbrev->tag) {
             case DW_TAG_subprogram: {
-                Function *func = NULL;
+                ElfFunction *func = NULL;
                 data = elfParseFunction(data, abbrev, unit, &func);
                 if (func != NULL) {
                     if (unit->lastFunction)
@@ -2745,7 +2745,7 @@ void elfCleanUp(Object *o) {
     free(o->location);
 }
 
-void elfCleanUp(Function *func) {
+void elfCleanUp(ElfFunction *func) {
     Object *o = func->parameters;
     while (o) {
         elfCleanUp(o);
@@ -2825,10 +2825,10 @@ void elfCleanUp(Type *t) {
 void elfCleanUp(CompileUnit *comp) {
     elfCleanUp(comp->abbrevs);
     free(comp->abbrevs);
-    Function *func = comp->functions;
+    ElfFunction *func = comp->functions;
     while (func) {
         elfCleanUp(func);
-        Function *next = func->next;
+        ElfFunction *next = func->next;
         free(func);
         func = next;
     }

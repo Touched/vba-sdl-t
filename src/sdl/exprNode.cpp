@@ -61,7 +61,7 @@ Node *exprNodeIdentifier() {
     return n;
 }
 
-bool exprNodeIdentifierResolve(Node *n, Function *f, CompileUnit *u) {
+bool exprNodeIdentifierResolve(Node *n, ElfFunction *f, CompileUnit *u) {
     Object *o;
     if (elfGetObject(n->name, f, u, &o)) {
         n->type = o->type;
@@ -89,7 +89,7 @@ Node *exprNodeNumber() {
     return n;
 }
 
-bool exprNodeNumberResolve(Node *n, Function *f, CompileUnit *u) {
+bool exprNodeNumberResolve(Node *n, ElfFunction *f, CompileUnit *u) {
     return true;
 }
 
@@ -108,7 +108,7 @@ Node *exprNodeStar(Node *exp) {
     return n;
 }
 
-bool exprNodeStarResolve(Node *n, Function *f, CompileUnit *u) {
+bool exprNodeStarResolve(Node *n, ElfFunction *f, CompileUnit *u) {
     if (n->expression->resolve(n->expression, f, u)) {
         if (n->expression->type->type == TYPE_pointer) {
             n->location = n->expression->location;
@@ -146,7 +146,7 @@ Node *exprNodeDot(Node *exp, Node *ident) {
     return n;
 }
 
-bool exprNodeDotResolve(Node *n, Function *f, CompileUnit *u) {
+bool exprNodeDotResolve(Node *n, ElfFunction *f, CompileUnit *u) {
     if (n->expression->resolve(n->expression, f, u)) {
         TypeEnum tt = n->expression->type->type;
 
@@ -200,7 +200,7 @@ Node *exprNodeArrow(Node *exp, Node *ident) {
     return n;
 }
 
-bool exprNodeArrowResolve(Node *n, Function *f, CompileUnit *u) {
+bool exprNodeArrowResolve(Node *n, ElfFunction *f, CompileUnit *u) {
     if (n->expression->resolve(n->expression, f, u)) {
         TypeEnum tt = n->expression->type->type;
         if (tt != TYPE_pointer) {
@@ -258,7 +258,7 @@ Node *exprNodeAddr(Node *exp) {
     return n;
 }
 
-bool exprNodeAddrResolve(Node *n, Function *f, CompileUnit *u) {
+bool exprNodeAddrResolve(Node *n, ElfFunction *f, CompileUnit *u) {
     if (n->expression->resolve(n->expression, f, u)) {
         if (n->expression->locType == LOCATION_memory) {
             n->location = n->expression->location;
@@ -290,7 +290,7 @@ Node *exprNodeSizeof(Node *exp) {
     return n;
 }
 
-bool exprNodeSizeofResolve(Node *n, Function *f, CompileUnit *u) {
+bool exprNodeSizeofResolve(Node *n, ElfFunction *f, CompileUnit *u) {
     if (n->expression->resolve(n->expression, f, u)) {
         n->location = n->expression->type->size;
         n->locType = LOCATION_value;
@@ -332,7 +332,7 @@ int exprNodeGetSize(Array *a, int index) {
     }
 }
 
-bool exprNodeArrayResolve(Node *n, Function *f, CompileUnit *u) {
+bool exprNodeArrayResolve(Node *n, ElfFunction *f, CompileUnit *u) {
     if (n->expression->resolve(n->expression, f, u)) {
         TypeEnum tt = n->expression->type->type;
         if (tt != TYPE_array &&
